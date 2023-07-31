@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { RouteObject } from 'react-router';
 
 import SidebarLayout from 'src/layouts/SidebarLayout';
+import LandingLayout from 'src/landing';
 import BaseLayout from 'src/layouts/BaseLayout';
 
 import SuspenseLoader from 'src/components/SuspenseLoader';
@@ -79,12 +80,12 @@ const StatusMaintenance = Loader(
 const routes: RouteObject[] = [
   {
     path: '',
-    element: <SidebarLayout />,
+    element: <LandingLayout />,
     children: [
-      {
-        path: '',
-        element: <Navigate to="" replace />
-      },
+      // {
+      //   path: '',
+      //   element: <Navigate to="" replace />
+      // },
       {
         path: '',
         element: <Overview />
