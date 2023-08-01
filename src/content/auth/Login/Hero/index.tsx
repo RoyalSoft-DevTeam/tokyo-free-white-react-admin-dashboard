@@ -1,8 +1,17 @@
-import { Box, Button, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, Stack, TextField, Typography } from '@mui/material';
 
-import { Link as RouterLink } from 'react-router-dom';
+import { Link, Link as RouterLink } from 'react-router-dom';
 
 import { styled } from '@mui/material/styles';
+
+import { SnackbarProvider, enqueueSnackbar } from 'notistack'
+
+import React, {useState, useEffect} from 'react';
+
+import HttpApiService from 'src/actions/http-api-service';
+
+import isEmail from 'src/validation/is-email';
+import isEmpty from 'src/validation/is-empty';
 
 const TypographyH1 = styled(Typography)(
   ({ theme }) => `
@@ -71,6 +80,39 @@ const TsAvatar = styled(Box)(
 );
 
 function Hero() {
+  const httpApiService = new HttpApiService();
+
+  const [user, setUser] = useState({
+    email: '',
+    password: ''
+  })
+
+  const onChange = e => {
+    setUser({
+      ...user, 
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const onClick = e => {
+    e.preventDefault();
+
+    if (isEmpty(user.email)) {
+      enqueueSnackbar('Please fill the email.')
+      return;
+    }
+    if (!isEmail(user.email)) {
+      enqueueSnackbar('Please fill valid email.')
+      return;
+    }
+    if (isEmpty(user.password)) {
+      enqueueSnackbar('Please fill the password.')
+      return;
+    }
+
+    httpApiService.signIn(user);
+  }
+
   return (
     <Container maxWidth="lg" sx={{ textAlign: 'center' }}>
       <Grid
@@ -80,9 +122,8 @@ function Hero() {
         container
       >
         <Grid item md={10} lg={8} mx="auto">
-          <LabelWrapper color="success">Version 1.0.0</LabelWrapper>
           <TypographyH1 sx={{ mb: 2 }} variant="h1">
-            OfferNights
+            Sign In
           </TypographyH1>
           <TypographyH2
             sx={{ lineHeight: 1.5, pb: 4 }}
@@ -90,64 +131,40 @@ function Hero() {
             color="text.secondary"
             fontWeight="normal"
           >
-            High performance React template built with lots of powerful
-            Material-UI components across multiple product niches for fast &
-            perfect apps development processes
+            Please sign in using your account
           </TypographyH2>
+
+          <Stack>
+              <TextField label="*Email" name='email' value={user.email} type='email' variant="outlined" onChange={onChange} /><br />
+          </Stack>
+
+          <Stack>
+            <TextField label="*Password" name='password' value={user.password} type='password' variant="outlined" onChange={onChange} /><br />
+          </Stack><br />
+
           <Button
-            component={RouterLink}
-            to="/dashboards/crypto"
+            onClick={onClick}
             size="large"
             variant="contained"
           >
-            Browse Live Preview
+            Sign In
           </Button>
-          <Button
-            sx={{ ml: 2 }}
-            component="a"
-            target="_blank"
-            rel="noopener"
-            href="https://bloomui.com/product/tokyo-free-white-react-typescript-material-ui-admin-dashboard"
-            size="large"
-            variant="text"
-          >
-            Key Features
-          </Button>
-          <Grid container spacing={3} mt={5}>
-            <Grid item md={6}>
-              <MuiAvatar>
-                <img
-                  src="/static/images/logo/material-ui.svg"
-                  alt="Material-UI"
-                />
-              </MuiAvatar>
-              <Typography variant="h4">
-                <Box sx={{ pb: 2 }}>
-                  <b>Powered by MUI (Material-UI)</b>
-                </Box>
-                <Typography component="span" variant="subtitle2">
-                  A simple and customizable component library to build faster,
-                  beautiful, and accessible React apps.
-                </Typography>
-              </Typography>
-            </Grid>
-            <Grid item md={6}>
-              {/* <TsAvatar>
-                <img
-                  src="/static/images/logo/typescript.svg"
-                  alt="Typescript"
-                />
-              </TsAvatar> */}
-              <Typography variant="h4">
-                <Box sx={{ pb: 2 }}>
-                  <b>Built with Typescript</b>
-                </Box>
-                <Typography component="span" variant="subtitle2">
-                  OfferNights
-                </Typography>
-              </Typography>
-            </Grid>
-          </Grid>
+
+          <Link to={'/user/sign-up'}>
+            <Button
+              sx={{ ml: 2 }}
+              component="a"
+              target="_blank"
+              rel="noopener"
+              size="large"
+              variant="text"
+            >
+              Sign up
+            </Button>
+          </Link>
+          
+          
+          
         </Grid>
       </Grid>
     </Container>
